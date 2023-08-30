@@ -1,0 +1,45 @@
+{%extends 'D:\VSCode\DjangoVS\ECom5\myproject\store\templates\base.html'%}
+
+
+{% block Body %}
+
+  <div class="container mt-5">
+    <div class="row">
+      <!-- Categories Column -->
+      <div class="col-md-3">
+        <div class="list-group">
+         
+          {%for category in categories%}
+          <a href="/store/?category={{category.id}}" class="list-group-item list-group-item-action">{{category}}</a>
+          <!-- Add more categories as needed -->
+          {%endfor%}
+        </div>
+      </div>
+  
+
+      <!-- Products Column -->
+      <div class="col-md-9">
+        <div class="row">
+          {%for product in products%}
+          <div class="col-md-4 mb-4">
+            
+            <div class="card">
+              <img src="{{product.image.url}}" class="card-img-top" alt="Product 1">
+              <div class="card-body">
+                <h5 class="card-title">{{product.name}}</h5>
+                <p class="card-text">{{product.price}}</p>
+                <a href="#" class="btn btn-primary">Add to Cart</a>
+              </div>
+            </div>
+            
+          </div>
+          {%endfor%}
+          
+          <!-- Add more product cards as needed -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+{%endblock%}
