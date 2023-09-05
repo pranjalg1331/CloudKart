@@ -1,10 +1,14 @@
 from django.shortcuts import render,redirect
+from django.http import HttpResponse
 from django.contrib.auth.forms import UserCreationForm
 from .forms import CreateUserForm
 from django.contrib.auth import authenticate, login, logout
-
-# Create your views here.
+import uuid
+from .models import Profile
+from . import utils
+# # Create your views here.
 def signup(request):
+   
     if request.method=='GET':
         form = CreateUserForm()
         
@@ -18,6 +22,9 @@ def signup(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.username = user.username.lower()
+            user.token=str(uuid.uuid4())
+            # print("nowwwbdkwj")
+            utils.send_email_token(user.email,user.token)
             user.save()
             login(request, user)
             return redirect('storepage')
@@ -27,5 +34,13 @@ def signup(request):
 
 
     
-    
+def verify(request,token):
+    user=Profile.objects.get(token=token)
+    print(user)
+    if user:
+        user.is_authenticated=True
+        user.save()
+        return redirect('storepage')
+    else:
+        return HttpResponse("Invalid token")
     
