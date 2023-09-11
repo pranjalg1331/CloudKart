@@ -28,7 +28,29 @@
               <div class="card-body">
                 <h5 class="card-title">{{product.name}}</h5>
                 <p class="card-text">{{product.price}}</p>
-                <a href="#" class="btn btn-primary">Add to Cart</a>
+                {%if profile%}
+                
+                
+                {%if product in product_incartitem %}
+                
+                <form method="GET" action="">
+                  {% csrf_token %}
+                  
+                  <button type="submit" class="btn btn-primary disbaled">Added to Cart</button>
+                  
+                </form>
+                {%else%}
+                <form method="POST" action="">
+                  {% csrf_token %}
+                  <input type="hidden" name="product_id" value="{{ product.id }}">
+                  <button type="submit" class="btn btn-primary ">Add to Cart</button>
+                </form>
+                {%endif%}
+                
+
+                {%else%}
+                <a href="/signup/" class="btn btn-primary">Add to Cart</a>
+                {%endif%}
               </div>
             </div>
             

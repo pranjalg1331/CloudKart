@@ -5,6 +5,7 @@ from .forms import CreateUserForm
 from django.contrib.auth import authenticate, login, logout
 import uuid
 from .models import Profile
+from store.models import Cart
 from . import utils
 # # Create your views here.
 def signup(request):
@@ -26,6 +27,9 @@ def signup(request):
             # print("nowwwbdkwj")
             utils.send_email_token(user.email,user.token)
             user.save()
+            cart=Cart(user=user)
+            cart.save()
+            request.session['user_email']=user.email
             login(request, user)
             return redirect('storepage')
         else:
