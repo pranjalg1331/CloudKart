@@ -13,7 +13,8 @@ def store(request):
         data={}
         
         user_email=request.session.get('user_email')
-        # print(user_email)
+        
+        print(user_email)
         if user_email:
             profile=Profile.objects.get(email=user_email)
             cart=Cart.objects.get(user=profile)
@@ -48,5 +49,22 @@ def store(request):
         return redirect('storepage')
     
     
+
+def cart(request):
+    if request.method=='GET':
+        user_email=request.session.get('user_email')
+        # print(user_email)
+        if(user_email):
+            user=Profile.objects.get(email=user_email)
+            print(user)
+            cart=Cart.objects.get(user=user)
+            cartitems=CartItem.objects.filter(cart=cart)
+            data={}
+            data['cartitems']=cartitems
+            return render(request,'cart.html',data)
+        
+        return redirect('signup')
+    
+
 
     

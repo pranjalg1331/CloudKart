@@ -24,13 +24,16 @@ def signup(request):
             user = form.save(commit=False)
             user.username = user.username.lower()
             user.token=str(uuid.uuid4())
-            # print("nowwwbdkwj")
             utils.send_email_token(user.email,user.token)
             user.save()
             cart=Cart(user=user)
             cart.save()
-            request.session['user_email']=user.email
+            print(user.email)
+            
+            # user_email=request.session.get('user_email')
+            # print(user_email)
             login(request, user)
+            request.session['user_email']=user.email
             return redirect('storepage')
         else:
             return render(request, 'signup.html', {'form': form})
