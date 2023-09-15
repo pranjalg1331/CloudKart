@@ -23,7 +23,7 @@
 
   <div class="container ">
     <h1 class="text-center ">Your Shopping Cart</h1>
-    <table class="table custom-table ">
+    <table class="table ">
       <thead>
         <tr>
           <th scope="col">Product Image</th>
@@ -36,16 +36,15 @@
         {%for items in cartitems%}
         <tr>
           <td>
-            <div class="d-flex align-items-center">
+            {% comment %} <div class="d-flex align-items-center"> {% endcomment %}
               <img src="{{items.product.image.url}}" alt="Product Image" style="max-width: 100px;">
-              <div class="ms-3">
-                
-              </div>
-            </div>
+              
+            {% comment %} </div> {% endcomment %}
           </td>
           <td><h5>{{items.product.name}}</h5>
             <p>Product 1 Description | Size: Medium</p></td>
-          <td><input type="number" value={{items.quantity}} min="1"></td>
+          <td><input type="number" id="quant" value={{items.quantity}} min="1">
+              <button onclick="myFunction()">Save</button></td>
           <td>{{items.product.price}}</td>
         </tr>
         {%endfor%}
@@ -57,4 +56,11 @@
       <button class="btn btn-primary">Checkout</button>
     </div>
   </div>
+
+  <script>
+    funtion myFunction(){
+      var x=document.getElementById("quant").value;
+      items.quantity=x.value
+
+    }
   {%endblock%}

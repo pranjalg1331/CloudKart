@@ -2,6 +2,8 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from register.models import Profile
 from .models import Product,Category,Cart,CartItem
+from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 def store(request):
     if request.method=='GET':
