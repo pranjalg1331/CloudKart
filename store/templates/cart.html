@@ -45,14 +45,14 @@
           {% csrf_token %}
           <td><input type="number" id="quant{{items.id}}" value={{items.quantity}} min="1">
               <button id="update_button" onclick="update_button('{% url 'updateQuantity' items.id %}',{{items.id}})" >Save</button></td>
-          <td>{{items.product.price}}</td>
+          <td >{{items.product.price}}</td>
         </tr>
         {%endfor%}
         
       </tbody>
     </table>
     <div class="text-center">
-      <h4>Total: $44.97</h4>
+      <h4>{{total_price}}</h4>
       <button class="btn btn-primary">Checkout</button>
     </div>
   </div>
@@ -63,11 +63,7 @@
       
       var quantity=document.getElementById('quant'+itemId).value
       var token=$('input[name=csrfmiddlewaretoken]').val();
-      
-      console.log(token)
-      console.log(itemId);
-      console.log(quantity);
-      
+
       jQuery.ajax({
         method:"POST",
         url:update_url,

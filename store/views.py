@@ -24,12 +24,14 @@ def store(request):
             cart=Cart.objects.get(user=profile)
             cartitems=CartItem.objects.filter(cart=cart)
             product_incartitem=[]
+            
             for a in cartitems:
                 product_incartitem.append(a.product)
-            print(product_incartitem)   
+            
             data['cartitems']=cartitems
             data['profile']=profile
             data['product_incartitem']=product_incartitem
+            
             
             
         data['products']=products
@@ -62,9 +64,12 @@ def cart(request):
             user=Profile.objects.get(email=user_email)
             print(user)
             cart=Cart.objects.get(user=user)
+            total_price=Cart.getTotalPrice(cart)
+            
             cartitems=CartItem.objects.filter(cart=cart)
             data={}
             data['cartitems']=cartitems
+            data['total_price']=total_price
             return render(request,'cart.html',data)
         
         return redirect('signup')
@@ -75,27 +80,10 @@ def updateQuantity(request,itemId):
         if(cartitem):
             print(cartitem)
             item_quant=int(request.POST.get('quantity'))
+            
             print(item_quant)
             cartitem.quantity=item_quant
             cartitem.save()
             return JsonResponse({'status':'quantity changed'})
-        
-        # else:
-        #     data={"msg":"did not work"}
-        #     return JsonResponse(data)
+
     return redirect('/')
-    # if is_ajax:
-    #     if request.method=='POST':
-    #         cartitem=CartItem.objects.get(id=itemId)
-    #         data=json.loads(request.body.decode('utf-8'))
-    #         quantity=data.get('quantity')
-    #         if quantity is not None:
-    #             print(quantity)
-    #             cartitem.quantity=quantity
-    #             return JsonResponse({'status': 'quantity changed!'})
-    #     print("hello")
-    #     return JsonResponse({'status': 'Invalid request'}, status=400)
-    # else:
-    #     return HttpResponseBadRequest('Invalid request')
-        
-    

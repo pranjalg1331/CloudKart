@@ -21,18 +21,35 @@ class Product(models.Model):
     
     def products_bycategory(id):
         return Product.objects.filter(category=id)
-
     
+
 class Cart(models.Model):
     id=models.AutoField
     user=models.OneToOneField(Profile,on_delete=models.CASCADE)
-    total_price=models.DecimalField(max_digits=10,decimal_places=2,default=0)
     
+    
+    def getTotalPrice(self):
+        sum = 0
+        cartitems=CartItem.objects.filter(cart=self)
+        print(cartitems)
+        for cartitem in cartitems:
+            sum+=cartitem.product.price*cartitem.quantity
+        return sum
+            
+        
     
 class CartItem(models.Model):
     cart=models.ForeignKey(Cart,on_delete=models.CASCADE)
     product=models.ForeignKey(Product,on_delete=models.CASCADE)
-    quantity=models.SmallIntegerField(default=1)
+    quantity=models.SmallIntegerField(default=1)  
+    
+    
+    
+        
+    
+    
+    
+
     
 
     
