@@ -1,5 +1,7 @@
 {%extends 'base.html'%}
 {% block Body %}
+  
+
   <style>
     .container-class {
       display: flex;
@@ -16,7 +18,7 @@
     }
     .custom-table th,
     .custom-table td {
-        padding: 15px; /* You can adjust the value to increase or decrease the spacing */
+        padding: 15px;
     }
   </style>
   
@@ -36,15 +38,13 @@
         {%for items in cartitems%}
         <tr>
           <td>
-            {% comment %} <div class="d-flex align-items-center"> {% endcomment %}
               <img src="{{items.product.image.url}}" alt="Product Image" style="max-width: 100px;">
-              
-            {% comment %} </div> {% endcomment %}
           </td>
           <td><h5>{{items.product.name}}</h5>
             <p>Product 1 Description | Size: Medium</p></td>
-          <td><input type="number" id="quant" value={{items.quantity}} min="1">
-              <button onclick="myFunction()">Save</button></td>
+          {% csrf_token %}
+          <td><input type="number" id="quant{{items.id}}" value={{items.quantity}} min="1">
+              <button id="update_button" onclick="update_button('{% url 'updateQuantity' items.id %}',{{items.id}})" >Save</button></td>
           <td>{{items.product.price}}</td>
         </tr>
         {%endfor%}
@@ -56,11 +56,33 @@
       <button class="btn btn-primary">Checkout</button>
     </div>
   </div>
+  
+  <script >
+    
+    function update_button(update_url,itemId){
+      
+      var quantity=document.getElementById('quant'+itemId).value
+      var token=$('input[name=csrfmiddlewaretoken]').val();
+      
+      console.log(token)
+      console.log(itemId);
+      console.log(quantity);
+      
+      jQuery.ajax({
+        method:"POST",
+        url:update_url,
+        data:{
+          'quantity':quantity,
+          csrfmiddlewaretoken:token
 
-  <script>
-    funtion myFunction(){
-      var x=document.getElementById("quant").value;
-      items.quantity=x.value
+        },
+        dataType:'json',
+        success: function(response){
+          console.log(response.status)
+        }
+      });
+      
 
-    }
+    };
+  </script>
   {%endblock%}

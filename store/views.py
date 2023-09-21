@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from register.models import Profile
 from .models import Product,Category,Cart,CartItem
 from django.contrib.auth.decorators import login_required
+import json
+from django.http import JsonResponse,HttpResponseBadRequest
 
 # Create your views here.
 def store(request):
@@ -67,6 +69,33 @@ def cart(request):
         
         return redirect('signup')
     
-
-
+def updateQuantity(request,itemId):
+    if request.method=="POST":
+        cartitem=CartItem.objects.get(id=itemId)
+        if(cartitem):
+            print(cartitem)
+            item_quant=int(request.POST.get('quantity'))
+            print(item_quant)
+            cartitem.quantity=item_quant
+            cartitem.save()
+            return JsonResponse({'status':'quantity changed'})
+        
+        # else:
+        #     data={"msg":"did not work"}
+        #     return JsonResponse(data)
+    return redirect('/')
+    # if is_ajax:
+    #     if request.method=='POST':
+    #         cartitem=CartItem.objects.get(id=itemId)
+    #         data=json.loads(request.body.decode('utf-8'))
+    #         quantity=data.get('quantity')
+    #         if quantity is not None:
+    #             print(quantity)
+    #             cartitem.quantity=quantity
+    #             return JsonResponse({'status': 'quantity changed!'})
+    #     print("hello")
+    #     return JsonResponse({'status': 'Invalid request'}, status=400)
+    # else:
+    #     return HttpResponseBadRequest('Invalid request')
+        
     
