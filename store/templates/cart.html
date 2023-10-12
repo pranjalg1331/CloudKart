@@ -41,7 +41,7 @@
               <img src="{{items.product.image.url}}" alt="Product Image" style="max-width: 100px;">
           </td>
           <td><h5>{{items.product.name}}</h5>
-            <p>Product 1 Description | Size: Medium</p></td>
+            <p>Product 1 Description | Size: Medium</p></td> 
           {% csrf_token %}
           <td><input type="number" id="quant{{items.id}}" value={{items.quantity}} min="1">
               <button id="update_button" onclick="update_button('{% url 'updateQuantity' items.id %}',{{items.id}})" >Save</button></td>
@@ -51,11 +51,16 @@
         
       </tbody>
     </table>
-    <div class="text-center">
-      <h4>{{total_price}}</h4>
-      <button class="btn btn-primary">Checkout</button>
-    </div>
+    
+    <form method="POST" action="/store/cart">
+      {% csrf_token %}
+      <h4 id="final_price">₹{{total_price}}</h4>
+      <button class="btn btn-primary" >Checkout</button>
+    </form>
+    
   </div>
+
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   
   <script >
     
@@ -74,11 +79,36 @@
         },
         dataType:'json',
         success: function(response){
-          console.log(response.status)
+          console.log(response.status,response.data)
+          const final_price=document.getElementById('final_price')
+          console.log(final_price)
+          final_price.textContent="₹"+response.data.toString()
         }
-      });
-      
 
+      });
+    };
+
+    var options = {
+       
+      // Enter the Key ID generated from the Dashboard
+      key: "{{ razorpay_merchant_key }}",
+      amount: "{{ razorpay_amount }}",
+      currency: "{{ currency }}",
+
+      name: "MY Ecom",
+       
+      // Pass the `id` obtained in the response of Step 1
+      order_id: "{{ razorpay_order_id }}",
+      callback_url: "{{ callback_url }}",
+    };
+     
+    // initialise razorpay with the options.
+    var rzp1 = new Razorpay(options);
+     
+    // add event listener to the payment button.
+    document.getElementById("pay-btn").onclick = function (e) {
+      rzp1.open();
+      e.preventDefault();
     };
   </script>
   {%endblock%}
