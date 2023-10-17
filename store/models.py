@@ -1,5 +1,6 @@
 from django.db import models
 from register.models import Profile
+import datetime
 # Create your models here.
 class Category(models.Model):
     id=models.AutoField
@@ -35,6 +36,11 @@ class Cart(models.Model):
         for cartitem in cartitems:
             sum+=cartitem.product.price*cartitem.quantity
         return sum
+    
+    def getCouponDiscountedPrice(self,value):
+        totalprice=Cart.getTotalPrice(self)
+        totalprice=totalprice-(totalprice*(value/100))
+        return totalprice
             
         
     
@@ -44,10 +50,23 @@ class CartItem(models.Model):
     quantity=models.SmallIntegerField(default=1)
     
   
+class Coupan(models.Model):
+    code=models.CharField(max_length=20)
+    value=models.SmallIntegerField(default=0)
+    expiry_date=models.DateField(auto_now=True)
     
-    
-    
+    def save(self, *args, **kwargs):
         
+        self.expiry_date = datetime.date.today() + datetime.timedelta(days=2)
+        super(Coupan, self).save(*args, **kwargs)
+        
+class Order(models.Model):
+    cart=models.OneToOneField(Cart,on_delete=models.PROTECT)
+    final_price=models.IntegerField(default=0)
+    
+    
+    
+    
     
     
     
