@@ -70,30 +70,81 @@
                         </tbody>
                         
                     </table>
-                    <h6 class="ml-2">Subtotal : ₹{{total_price}}</h4>
+                    
                     
             
-           
-                <h3>Coupons</h3>
-                <form>
+        
+                <h3 class="mt-4">Coupons</h3>
+                
                     <div class="form-group">
                         <label for="couponCode">Coupon Code</label>
                         <input type="text" class="form-control" id="couponCode" placeholder="Enter coupon code">
                     </div>
-                    <button type="submit" class="btn btn-primary">Apply Coupon</button>
-                </form>
-            
+                    <button type="submit" class="btn " style="background-color: #e7e7e7; color: black;" id="applycoupon">Apply Coupon</button>
+                
+                    <h6 class="ml-2 mt-4" id="subtotal">Subtotal : ₹{{total_price}}</h4>
             
         </div>
     </div>
     
     
-    <button type="submit" class="btn btn-primary mt-4">Place Order</button>
+    <button type="submit" class="btn btn-primary mt-4" id="pay-btn">Place Order</button>
+    
 </div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    
+    document.getElementById("applycoupon").addEventListener("click", function(){
+        coupon=document.getElementById("couponCode").value
+        jQuery.ajax({
+            type: "POST",
+            url: "{% url 'applycoupon'%}",
+            data: {
+                'coupon':coupon
+            },
+            dataType: 'json',
+            success:function(response){
+                if(response.message="success"){
+                    console.log(response.totalprice)
+                    const subtotal=document.getElementById("subtotal")
+                    subtotal.textContent="Subtotal : ₹"+response.totalprice
+                    
+                }
+                
+            }
+        });
+    });
+    var options = {
+       
+        // Enter the Key ID generated from the Dashboard
+        key: "{{ razorpay_merchant_key }}", 
+         
+        // Amount is in currency subunits.
+        // Default currency is INR. Hence, 
+        // 50000 refers to 50000 paise
+        amount: "{{ razorpay_amount }}", 
+        currency: "{{ currency }}",
+         
+        // Your/store name.
+        name: "Dj Razorpay", 
+         
+        // Pass the `id` obtained in the response of Step 1
+        order_id: "{{ razorpay_order_id }}", 
+        callback_url: "{{ callback_url }}",
+      };
+       
+      // initialise razorpay with the options.
+      var rzp1 = new Razorpay(options);
+       
+      // add event listener to the payment button.
+      document.getElementById("pay-btn").onclick = function (e) {
+        rzp1.open();
+        e.preventDefault();
+      };
+  
+
+</script>
 </body>
 </html>
 {%endblock%}

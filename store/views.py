@@ -4,7 +4,7 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from register.models import Profile
-from .models import Product,Category,Cart,CartItem
+from .models import Product,Category,Cart,CartItem,Coupan
 from django.contrib.auth.decorators import login_required
 import json
 from django.http import JsonResponse,HttpResponseBadRequest
@@ -78,17 +78,7 @@ def cart(request):
             data['user']=user
             data['cartitems']=cartitems
             data['total_price']=total_price
-            razorpay_order = razorpay_client.order.create(dict(amount=total_price*100,
-                                                       currency='INR',
-                                                       payment_capture='0'))
-            razorpay_order_id = razorpay_order['id']
-            
-            callback_url='paymenthandler/'
-            data['razorpay_order_id'] = razorpay_order_id
-            data['razorpay_merchant_key'] = settings.RAZOR_KEY_ID
-            data['razorpay_amount'] = total_price*100
-            data['currency'] = 'INR'
-            data['callback_url'] = callback_url
+           
             
             return render(request,'cart.html',data)
         
@@ -112,10 +102,10 @@ def updateQuantity(request,itemId):
         cartitem=CartItem.objects.get(id=itemId)
         
         if(cartitem):
-            print(cartitem)
+            
             item_quant=int(request.POST.get('quantity'))
             
-            print(item_quant)
+            
             cartitem.quantity=item_quant
             cartitem.save()
             
@@ -124,7 +114,7 @@ def updateQuantity(request,itemId):
             cart.save()
             
             data=request.POST
-            print(data)
+            
             
             return JsonResponse({'data':total_price,'status':'quantity changed'})
 
@@ -151,22 +141,22 @@ def paymenthandler(request):
             result = razorpay_client.utility.verify_payment_signature(
                 params_dict)
             if result is not None:
-                amount = request.POST.get('razorpay_amount')  # Rs. 200
+                amount = 20000  # Rs. 200
                 try:
  
                     # capture the payemt
                     razorpay_client.payment.capture(payment_id, amount)
  
                     # render success page on successful caputre of payment
-                    return render(request, 'login.html')
+                    return render(request, 'paymentsuccess.html')
                 except:
  
                     # if there is an error while capturing payment.
-                    return render(request, 'cart.html')
+                    return render(request, 'paymentfail.html')
             else:
  
                 # if signature verification fails.
-                return render(request, 'cart.html')
+                return render(request, 'paymentfail.html')
         except:
  
             # if we don't find the required parameters in POST data
@@ -174,6 +164,52 @@ def paymenthandler(request):
     else:
        # if other than POST request is made.
         return HttpResponseBadRequest()
+
     
 def checkout(request):
-    return render(request,'checkout.html')
+    currency ="INR"
+    amount = 20000  # Rs. 200
+ 
+    # Create a Razorpay Order
+    razorpay_order = razorpay_client.order.create(dict(amount=amount,
+                                                       currency=currency,
+                                                       payment_capture='0'))
+ 
+    # order id of newly created order.
+    razorpay_order_id = razorpay_order['id']
+    callback_url = 'paymenthandler/'
+ 
+    # we need to pass these details to frontend.
+    context = {}
+    context['razorpay_order_id'] = razorpay_order_id
+    context['razorpay_merchant_key'] = settings.RAZOR_KEY_ID
+    context['razorpay_amount'] = amount
+    context['currency'] = "INR"
+    context['callback_url'] = callback_url
+    
+    return render(request,'checkout.html',context=context)
+
+
+@csrf_exempt
+def applycoupon(request):
+    if request.method=="POST":
+        data=request.POST
+        code=data['coupon']
+        print(code)
+        coupon=Coupan.objects.get(code=code)
+        if(coupon):
+            user_email=request.session.get('user_email')
+        # print(user_email)
+            if(user_email):
+                user=Profile.objects.get(email=user_email)
+                cart=Cart.objects.get(user=user)
+                total_price=Cart.getTotalPrice(cart)
+                print(total_price)
+                total_price=Cart.getCouponDiscountedPrice(cart,coupon.value)
+                print(total_price)
+                return JsonResponse({'totalprice':total_price,'message':'success'})
+        else:
+            return JsonResponse({'message':'failed'})
+        
+
+            
