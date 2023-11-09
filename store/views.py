@@ -83,19 +83,8 @@ def cart(request):
             return render(request,'cart.html',data)
         
         return redirect('signup')
-    else:
-        user_email=request.session.get('user_email')
-        # print(user_email)
-        if(user_email):
-            user=Profile.objects.get(email=user_email)
-            cart=Cart.objects.get(user=user)
-            total_price=Cart.getTotalPrice(cart)
-            cartitems=CartItem.objects.filter(cart=cart)
-            data={}
-            data['user']=user
-            data['cartitems']=cartitems
-            data['total_price']=total_price
-        return render(request,'checkout.html',data)
+   
+        
     
 def updateQuantity(request,itemId):
     if request.method=="POST":
@@ -167,27 +156,41 @@ def paymenthandler(request):
 
     
 def checkout(request):
-    currency ="INR"
-    amount = 20000  # Rs. 200
- 
-    # Create a Razorpay Order
-    razorpay_order = razorpay_client.order.create(dict(amount=amount,
-                                                       currency=currency,
-                                                       payment_capture='0'))
- 
-    # order id of newly created order.
-    razorpay_order_id = razorpay_order['id']
-    callback_url = 'paymenthandler/'
- 
-    # we need to pass these details to frontend.
-    context = {}
-    context['razorpay_order_id'] = razorpay_order_id
-    context['razorpay_merchant_key'] = settings.RAZOR_KEY_ID
-    context['razorpay_amount'] = amount
-    context['currency'] = "INR"
-    context['callback_url'] = callback_url
+    if request.method=="POST":
+        user_email=request.session.get('user_email')
+        # print(user_email)
+        if(user_email):
+            user=Profile.objects.get(email=user_email)
+            cart=Cart.objects.get(user=user)
+            total_price=Cart.getTotalPrice(cart)
+            cartitems=CartItem.objects.filter(cart=cart)
+            data={}
+            data['user']=user
+            data['cartitems']=cartitems
+            data['total_price']=total_price
+            currency ="INR"
+            amount = total_price*100 # Rs. 200
+        
+            # Create a Razorpay Order
+            razorpay_order = razorpay_client.order.create(dict(amount=amount,
+                                                            currency=currency,
+                                                            payment_capture='0'))
+        
+            # order id of newly created order.
+            razorpay_order_id = razorpay_order['id']
+            callback_url = 'paymenthandler/'
+        
+            # we need to pass these details to frontend.
+           
+            data['razorpay_order_id'] = razorpay_order_id
+            data['razorpay_merchant_key'] = settings.RAZOR_KEY_ID
+            data['razorpay_amount'] = amount
+            data['currency'] = currency
+            data['callback_url'] = callback_url
     
-    return render(request,'checkout.html',context=context)
+        return render(request,'checkout.html',data)
+   
+    
 
 
 @csrf_exempt

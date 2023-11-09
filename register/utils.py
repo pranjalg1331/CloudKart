@@ -11,14 +11,16 @@ def send_email_token(email,token):
         # print("jell")
         email_from = settings.EMAIL_HOST_USER
         recipient_list = [email]
-        send_mail( subject, message, email_from, recipient_list ,fail_silently=True)
+        print(settings.EMAIL_HOST_USER)
+        send_mail( subject, message, email_from, recipient_list ,fail_silently=False)
                 
         
         
         
     except Exception as e:
+        print("failed")
+        print(e)
         return False
-    
     return True
     
     

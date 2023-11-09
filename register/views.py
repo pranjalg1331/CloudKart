@@ -29,10 +29,6 @@ def signup(request):
             user.save()
             cart=Cart(user=user)
             cart.save()
-            print(user.email)
-            
-            # user_email=request.session.get('user_email')
-            # print(user_email)
             login(request, user)
             request.session['user_email']=user.email
             return redirect('storepage')
@@ -53,7 +49,7 @@ def verify(request,token):
         return HttpResponse("Invalid token")
     
 
-def login(request):
+def login_view(request):
     if request.method=='GET':
         return render(request,'login.html')
     else:

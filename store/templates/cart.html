@@ -52,7 +52,7 @@
       </tbody>
     </table>
     
-    <form method="POST" action="/store/cart">
+    <form method="POST" action="/store/cart/checkout/">
       {% csrf_token %}
       <h4 id="final_price">₹{{total_price}}</h4>
       <button class="btn btn-primary " >Checkout</button>

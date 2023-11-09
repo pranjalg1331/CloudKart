@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv()
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -134,8 +136,19 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER =os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER =os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
-RAZOR_KEY_ID = os.getenv('RAZOR_KEY_ID')
-RAZOR_KEY_SECRET = os.getenv('RAZOR_KEY_SECRET')
+RAZOR_KEY_ID = os.environ.get('RAZOR_KEY_ID')
+RAZOR_KEY_SECRET = os.environ.get('RAZOR_KEY_SECRET')
+
+
+# AWS_ACCESS_KEY_ID = 'AWS_ACCESS_KEY_ID '
+# AWS_SECRET_ACCESS_KEY = 'AWS_SECRET_ACCESS_KEY'
+# AWS_STORAGE_BUCKET_NAME = 'AWS_STORAGE_BUCKET_NAME'
+# AWS_S3_SIGNATURE_NAME = 's3v4',
+# AWS_S3_REGION_NAME = 'us-east-1'
+# AWS_S3_FILE_OVERWRITE = False
+# AWS_DEFAULT_ACL =  None
+# AWS_S3_VERITY = True
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
