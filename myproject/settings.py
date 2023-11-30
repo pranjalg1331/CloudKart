@@ -87,10 +87,10 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ecom_db',
-        'USER': 'superuserdb',
-        'PASSWORD': 'dbpassword',
-        'HOST': 'db-ecom.cyug85cfvwvo.eu-north-1.rds.amazonaws.com',
+        'NAME': 'ecomrds',
+        'USER': 'superuser',
+        'PASSWORD': 'superuser',
+        'HOST': 'ecomrds.cmspcpm54kih.us-east-1.rds.amazonaws.com',
         'PORT': '5432',
     }
 }
