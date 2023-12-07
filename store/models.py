@@ -2,6 +2,7 @@ from django.db import models
 from register.models import Profile
 import datetime
 # Create your models here.
+
 class Category(models.Model):
     id=models.AutoField
     name=models.CharField(max_length=50)

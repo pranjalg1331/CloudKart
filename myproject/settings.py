@@ -89,9 +89,9 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ecomrds',
-        'USER': 'superuser',
-        'PASSWORD': 'superuser',
+        'NAME': os.environ.get('NAME'),
+        'USER': os.environ.get('USER'),
+        'PASSWORD': os.environ.get('PASSWORD'),
         'HOST': 'ecomrds.cmspcpm54kih.us-east-1.rds.amazonaws.com',
         'PORT': '5432',
     }
@@ -155,9 +155,9 @@ RAZOR_KEY_ID = os.environ.get('RAZOR_KEY_ID')
 RAZOR_KEY_SECRET = os.environ.get('RAZOR_KEY_SECRET')
 
 
-AWS_ACCESS_KEY_ID = 'AKIA6O3XFWSYV45TURTM'
-AWS_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'ecomwebappbucket'
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY =  os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME =  os.environ.get('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_SIGNATURE_NAME = 's3v4',
 AWS_S3_REGION_NAME = 'us-east-1'
 AWS_S3_FILE_OVERWRITE = False
